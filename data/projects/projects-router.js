@@ -1,81 +1,48 @@
 const express = require('express');
 const Projects = require('../helpers/projectModel.js');
-// const Posts = require('../posts/postDb');
+const Actions = require('../helpers/actionModel.js');
 const router = express.Router();
 
-router.post('/', validateUser,(req, res) => {
-    const newUser = req.body;
 
-    Users.insert(newUser)
-        .then(user => {
-            res.status(201).json(user);
-        })
-        .catch(error => {
-            // log error to database
-            console.log(error);
-            res.status(500).json({
-                error: "The user's information could not be posted."
-            });
-        });
-});
-
-router.post('/:id/posts', validatePost, validateUserId, (req, res) => {
-   
-    Posts.insert(req.body)
-        .then(posts => {
-            if (!posts) {
-                res.status(404).json({ Error: "The user with the specified ID was not found" })
-            }
-
-            res.status(200).json(posts);
-        })
-        .catch(error => {
-            // log error to database
-            console.log(error);
-            res.status(500).json({
-                error: "The user's information could not be posted."
-            });
-        });
-});
 
 router.get('/', (req, res) => {
-    Users.get(req.query)
-        .then(posts => {
-            res.status(200).json(posts);
+    Projects.get()
+        .then(projects => {
+            res.status(200).json(projects);
         })
         .catch(error => {
             // log error to database
             console.log(error);
             res.status(500).json({
-                error: "The users information could not be retrieved."
+                error: "The projects information could not be retrieved."
             });
         });
 });
 
-router.get('/:id', validateUserId, (req, res) => {
-    Users.getById(req.params.id)
-        .then(user => {
-            if (!user) {
-                res.status(404).json({ Error: "The user with the specified ID was not found" })
+router.get('/:id', validateProjectId, (req, res) => {
+    Projects.get(req.params.id)
+        .then(project => {
+            if (!project) {
+                res.status(404).json({ Error: "The project with the specified ID was not found" })
             }
-            res.status(200).json(user);
+            res.status(200).json(project);
         })
         .catch(error => {
             // log error to database
             console.log(error);
             res.status(500).json({
-                error: "The users information could not be retrieved."
+                error: "The projects information could not be retrieved."
             });
         });
 });
 
-router.get('/:id/posts', validateUserId, (req, res) => {
+router.get('/:id/actions', validateProjectId, (req, res) => {
 
-    id = req.user;
-    Users.getUserPosts(id)
+    id = req.project;
+    Projects.getProjectActions(id)
         .then(posts => {
             if (!posts) {
-                res.status(404).json({ Error: "The user with the specified ID was not found" })
+                res.status(404).json({ Error: "The project with the specified ID was not found" })
             }
             res.status(200).json(posts);
         })
@@ -83,80 +50,116 @@ router.get('/:id/posts', validateUserId, (req, res) => {
             // log error to database
             console.log(error);
             res.status(500).json({
-                error: "The user's posts could not be retrieved."
+                error: "The project's actions could not be retrieved."
             });
         });
 });
 
-router.delete('/:id', validateUserId, (req, res) => {
-    const id  = req.user
 
-    Users.remove(id)
-    .then(user => {
-        if (!user) {
-            res.status(404).json({ message: "The user with the specified ID does not exist." })
+router.post('/', validateProject,(req, res) => {
+    const newProject = req.body;
+
+    Projects.insert(newProject)
+        .then(project => {
+            res.status(201).json(project);
+        })
+        .catch(error => {
+            // log error to database
+            console.log(error);
+            res.status(500).json({
+                error: "The project's information could not be posted."
+            });
+        });
+});
+
+router.post('/:id/actions', validateProjectId, (req, res) => {
+   
+    Actions.insert(req.body)
+        .then(action => {
+            if (!action) {
+                res.status(404).json({ Error: "The project with the specified ID was not found" })
+            }
+
+            res.status(200).json(action);
+        })
+        .catch(error => {
+            // log error to database
+            console.log(error);
+            res.status(500).json({
+                error: "The action could not be posted."
+            });
+        });
+});
+
+router.delete('/:id', validateProjectId, (req, res) => {
+    const id  = req.project
+
+    Projects.remove(id)
+    .then(project => {
+        if (!project) {
+            res.status(404).json({ message: "The project with the specified ID does not exist." })
         }
-            res.status(200).json({ message: 'RIP user' });
+            res.status(200).json({ message: 'RIP project' });
     })
     .catch(error => {
         // log error to database
         console.log(error);
         res.status(500).json({
-            message: 'Error removing the user',
+            message: 'Error removing the project',
         });
     });
 });
 
-router.put('/:id', validateUserId, (req, res) => {
+router.put('/:id', validateProjectId, (req, res) => {
     const changes = req.body;
-    const id = req.user;
+    const id = req.project;
     
     if (!changes.name) {
-        res.status(400).json({ errorMessage: "Please provide a name for the user" });
+        res.status(400).json({ errorMessage: "Please provide a name for the project" });
     }
 
-    Users.update(id, changes)
-        .then(user => {
-            if (!user) {
-                res.status(404).json({ message: "The user with the specified ID does not exist." })
+    Projects.update(id, changes)
+        .then(project => {
+            if (!project) {
+                res.status(404).json({ message: "The project with the specified ID does not exist." })
             }
             else {
-                res.status(200).json(user);
+                res.status(200).json(project);
             }
         })
         .catch(error => {
             // log error to database
             console.log(error);
             res.status(500).json({
-                message: 'Error updating the user',
+                message: 'Error updating the project',
             });
         });
 });
 
 //custom middleware
 
-function validateUserId(req, res, next) {
-const userID = req.params.id;
+function validateProjectId(req, res, next) {
+const projectID = req.params.id;
 
-if (userID) {
-    req.user = userID;
+if (projectID) {
+    req.project = projectID;
     next()
 }
 else {
-    res.status(404).json({ message: "Invalid user ID 564654" })
+    res.status(404).json({ message: "Invalid project ID " })
 }
 
 
 };
 
-function validateUser(req, res, next) {
-const user = req.body;
+function validateProject(req, res, next) {
+const project = req.body;
 
-if(!user){
-    res.status(400).json({ message: "Missing user data" })
+if(!project){
+    res.status(400).json({ message: "Missing project data" })
 }
-else if(!user.name){
-    res.status(400).json({ message: "Missing user name" })
+else if(!project.name){
+    res.status(400).json({ message: "Missing project name" })
 
 }
 else{
