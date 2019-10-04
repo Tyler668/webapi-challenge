@@ -31,7 +31,7 @@ Demonstrate your understanding of this Sprint's concepts by answering the follow
 - [ ] Describe a Resource?
 
 - [ ] What can the API return to help clients know if a request was successful?
-
+The api can return a res.status(200) along with a json message to indicate it was successful
 - [ ] How can we partition our application into sub-applications?
 
 ## Project Setup
