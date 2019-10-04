@@ -21,6 +21,7 @@ const logger = (req, res, next) => {
   }
 
 const projectRouter = require('./data/projects/projects-router.js');
+const actionRouter = require('./data/actions/actions-router.js');
 
 
 
@@ -30,6 +31,8 @@ server.use(helmet());
 server.use(express.json());
 
 server.use('/api/projects', projectRouter);
+server.use('/api/actions', actionRouter);
+
 
 // const gate = require('./data/auth/gate-middleware.js');
 
