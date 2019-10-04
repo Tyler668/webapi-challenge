@@ -26,13 +26,25 @@ Demonstrate your understanding of this Sprint's concepts by answering the follow
 
 - [ ] Mention two parts of Express that you learned about this week.
 
+Routing - we can map incoming requests to the appropriate request handler using the url and HTTP method
+
+Middleware - logic to handle extra functions of the application such as logging or authentication 
+
 - [ ] Describe Middleware?
+
+Middleware extends the features already provided by express. With it we can write / import custom functions that do extra things like authentication, security, logging, validation, etc.
 
 - [ ] Describe a Resource?
 
+A resource is simply something someone might try to access or modify on our API via an endpoint specified by URL
+
 - [ ] What can the API return to help clients know if a request was successful?
 
+The api can return a res.status(200) along with a json message to indicate it was successful
+
 - [ ] How can we partition our application into sub-applications?
+
+By using routes, we can split the app into sub-apps that are accessed by specific url and HTTP methods
 
 ## Project Setup
 
