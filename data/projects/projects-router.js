@@ -114,8 +114,8 @@ router.put('/:id', validateProjectId, (req, res) => {
     const changes = req.body;
     const id = req.project;
     
-    if (!changes.name) {
-        res.status(400).json({ errorMessage: "Please provide a name for the project" });
+    if (!changes.name || !changes.description) {
+        res.status(400).json({ errorMessage: "Please provide both a name and description for the project" });
     }
 
     Projects.update(id, changes)
@@ -167,19 +167,19 @@ else{
 }
 };
 
-function validatePost(req, res, next) {
-    const post = req.body;
+// function validateAction(req, res, next) {
+//     const post = req.body;
     
-    if(!post){
-        res.status(400).json({ message: "Missing post data" })
-    }
-    else if(!post.text){
-        res.status(400).json({ message: "Missing post text" })
+//     if(!post){
+//         res.status(400).json({ message: "Missing post data" })
+//     }
+//     else if(!post.text){
+//         res.status(400).json({ message: "Missing post text" })
     
-    }
-    else{
-        next();
-    }
-};
+//     }
+//     else{
+//         next();
+//     }
+// };
 
 module.exports = router;
